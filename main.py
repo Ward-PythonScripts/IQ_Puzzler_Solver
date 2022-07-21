@@ -6,6 +6,8 @@ The starting grid is given, and after this you will have to be able to solve the
 grid is 11x5
 """
 import tkinter
+
+import numpy
 import numpy as np
 
 # definitions
@@ -60,6 +62,7 @@ class MyPieceButton:
             self.remove_piece()
         else:
             self.add_piece()
+        self.toggled = not self.toggled
 
     def add_piece(self):
         global starting_pieces
@@ -68,9 +71,37 @@ class MyPieceButton:
 
     def remove_piece(self):
         global starting_pieces
-        starting_pieces.remove(self.piece)
+        starting_pieces = my_list_remove(starting_pieces,self.piece)
         self.button.config(bg="white")
 
+def my_list_remove(pieces:numpy.ndarray,piece:numpy.ndarray):
+    pos = get_pos_of_element(pieces,piece)
+    if pos == -1:
+        print("Tried to find the piece in the list of pieces but failed spectacularly")
+        exit(77)
+    else:
+        del pieces[pos]
+        return pieces
+
+def get_pos_of_element(pieces:numpy.ndarray,piece:numpy.ndarray):
+    index = 0
+    for piece_lst in pieces:
+        #get all the pieces and than compare them with the element
+        if compare_pieces(piece_lst,piece):
+            return index
+        index += 1
+    return -1
+def compare_pieces(piece1:numpy.ndarray,piece2:numpy.ndarray):
+    if np.size(piece1) == np.size(piece2):
+        for y in range(len(piece1)):
+            for x in range(len(piece1[y])):
+                # go through all the elements of the piece and compare those with the elements of the piece from
+                # the piece array
+                if piece1[y][x] != piece2[y][x]:
+                    return False
+        return True
+    else:
+        return False
 
 def get_piece_string():
     global gui_piece_selected
@@ -114,10 +145,12 @@ def button_callback(x: int, y: int, btn_text):
 
 def generate_option_buttons():
     # standard piece, wizard, hat, empty
-    piece_button = tkinter.Button(master, text="piece", command=lambda: put_piece())
+    piece_button = tkinter.Button(master, text="piece")
     piece_button.grid(row=0, column=option_buttons_column)
-    no_piece_button = tkinter.Button(master, text="empty", command=lambda: dont_put_piece())
+    no_piece_button = tkinter.Button(master, text="empty")
     no_piece_button.grid(row=1, column=option_buttons_column)
+    piece_button['command'] = lambda: put_piece(piece_button,no_piece_button)
+    no_piece_button['command']= lambda :dont_put_piece(piece_button,no_piece_button)
     select_all_button = tkinter.Button(master,text="select all",command=lambda:select_all_pieces())
     select_all_button.grid(row=2,column=option_buttons_column)
     calculate_button = tkinter.Button(master, text="calculate", command=lambda: calculate())
@@ -162,14 +195,17 @@ def add_piece(pieces, are_adding):
         starting_pieces.remove(pieces)
 
 
-def put_piece():
+def put_piece(piece_button,no_piece_button):
     global gui_piece_selected
     gui_piece_selected = True
+    piece_button.config(bg="light green")
+    no_piece_button.config(bg="white")
 
-
-def dont_put_piece():
+def dont_put_piece(piece_button,no_piece_button):
     global gui_piece_selected
     gui_piece_selected = False
+    piece_button.config(bg="white")
+    no_piece_button.config(bg="light green")
 
 def select_all_pieces():
     global grid
