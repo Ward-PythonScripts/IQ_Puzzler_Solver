@@ -410,10 +410,9 @@ def calculate_specific():
     Node(grid_loc,pieces_loc)
 
 
-# main
-# pieces: standard piece -> 1, wizard -> 20, hat -> 10, empty -> 0, double_stack -> 2
 
-#build_gui()
+
+build_gui()
 #calculate_empty()
 #calculate_one_left()
-calculate_specific()
+#calculate_specific()
