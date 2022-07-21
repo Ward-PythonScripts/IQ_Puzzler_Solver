@@ -43,6 +43,7 @@ gui_piece_selected = True
 master = tkinter.Tk()
 option_buttons_column = 20  # constant
 grid = [[]]
+grid_buttons:list[tkinter.StringVar] = []
 starting_pieces = []
 
 
@@ -69,7 +70,7 @@ class MyPieceButton:
         global starting_pieces
         starting_pieces.remove(self.piece)
         self.button.config(bg="white")
-        
+
 
 def get_piece_string():
     global gui_piece_selected
@@ -80,6 +81,7 @@ def get_piece_string():
 
 
 def generate_field():
+    global grid_buttons
     master.title("fill in the correct level")
     master.geometry("650x375")
     buttons = []
@@ -91,6 +93,7 @@ def generate_field():
             button = tkinter.Button(master, textvariable=btn_text,
                                     command=lambda l_x=x, l_y=y, l_txt=btn_text: button_callback(l_x, l_y, l_txt))
             button.grid(row=y, column=x)
+            grid_buttons.append(btn_text)
             rowButtons.append(0)
         buttons.append(rowButtons)
     return buttons
@@ -115,8 +118,10 @@ def generate_option_buttons():
     piece_button.grid(row=0, column=option_buttons_column)
     no_piece_button = tkinter.Button(master, text="empty", command=lambda: dont_put_piece())
     no_piece_button.grid(row=1, column=option_buttons_column)
+    select_all_button = tkinter.Button(master,text="select all",command=lambda:select_all_pieces())
+    select_all_button.grid(row=2,column=option_buttons_column)
     calculate_button = tkinter.Button(master, text="calculate", command=lambda: calculate())
-    calculate_button.grid(row=2, column=option_buttons_column + 1)
+    calculate_button.grid(row=2, column=option_buttons_column + 3)
 
 
 def generate_pieces_left():
@@ -165,6 +170,20 @@ def put_piece():
 def dont_put_piece():
     global gui_piece_selected
     gui_piece_selected = False
+
+def select_all_pieces():
+    global grid
+    string_to_put = get_piece_string()
+    if gui_piece_selected:
+        piece_to_put = 1
+    else:
+        piece_to_put = 0
+    for y in range(len(grid)):
+        for x in range(len(grid[y])):
+            grid[y][x] = piece_to_put
+    for button_txt in grid_buttons:
+        button_txt.set(string_to_put)
+
 
 
 def build_gui():
@@ -258,6 +277,7 @@ def render(board):
 
 def calculate():
     global grid, starting_pieces
+    master.quit()
     if len(starting_pieces) == 0:
         print("There were no starting pieces given, you probably still need to configure this")
     # start the first node, this will trigger the iterative process
