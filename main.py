@@ -56,7 +56,7 @@ def get_piece_string():
 
 def generate_field():
     master.title("fill in the correct level")
-    master.geometry("450x175")
+    master.geometry("650x375")
     buttons = []
     for y in range(0, 5):
         rowButtons = []
@@ -93,6 +93,94 @@ def generate_option_buttons():
     calculate_button = tkinter.Button(master, text="calculate", command=lambda: calculate())
     calculate_button.grid(row=2, column=option_buttons_column + 1)
 
+def generate_pieces_left():
+    row_int = 0
+    pieces_label = tkinter.Label(master,text="Select the pieces that are left")
+    pieces_label.grid(row = row_int,column=option_buttons_column+2)
+    row_int += 1
+    dag_button = tkinter.Button(master,text="Dark Green",command=lambda: add_dag_piece())
+    dag_button.grid(row=row_int,column=option_buttons_column+2)
+    row_int += 1
+    ora_button = tkinter.Button(master, text="Orange",command=lambda: add_lig_piece())
+    ora_button.grid(row=row_int, column=option_buttons_column + 2)
+    row_int += 1
+    red_button = tkinter.Button(master, text="Red",command=lambda: add_red_piece())
+    red_button.grid(row=row_int, column=option_buttons_column + 2)
+    row_int += 1
+    lib_button = tkinter.Button(master, text="Light Blue",command=lambda: add_lib_piece())
+    lib_button.grid(row=row_int, column=option_buttons_column + 2)
+    row_int += 1
+    gre_button = tkinter.Button(master, text="Grey",command=lambda: add_gre_piece())
+    gre_button.grid(row=row_int, column=option_buttons_column + 2)
+    row_int += 1
+    pur_button = tkinter.Button(master, text="Purple",command=lambda: add_pur_piece())
+    pur_button.grid(row=row_int, column=option_buttons_column + 2)
+    row_int += 1
+    dab_button = tkinter.Button(master, text="Dark Blue",command=lambda: add_dab_piece())
+    dab_button.grid(row=row_int, column=option_buttons_column + 2)
+    row_int += 1
+    bei_button = tkinter.Button(master, text="Beige",command=lambda: add_bei_piece())
+    bei_button.grid(row=row_int, column=option_buttons_column + 2)
+    row_int += 1
+    pin_button = tkinter.Button(master, text="Pink",command=lambda: add_pin_piece())
+    pin_button.grid(row=row_int, column=option_buttons_column + 2)
+    row_int += 1
+    whi_button = tkinter.Button(master, text="White",command=lambda: add_whi_piece())
+    whi_button.grid(row=row_int, column=option_buttons_column + 2)
+    row_int += 1
+    yel_button = tkinter.Button(master, text="Yellow",command=lambda: add_yel_piece())
+    yel_button.grid(row=row_int, column=option_buttons_column + 2)
+    row_int += 1
+    lig_button = tkinter.Button(master,text="Light Green",command=lambda: add_lig_piece())
+    lig_button.grid(row=row_int,column=option_buttons_column+2)
+
+def add_dag_piece():
+    global starting_pieces
+    starting_pieces.append(dag)
+
+def add_ora_piece():
+    global starting_pieces
+    starting_pieces.append(ora)
+
+def add_red_piece():
+    global starting_pieces
+    starting_pieces.append(red)
+
+def add_lib_piece():
+    global starting_pieces
+    starting_pieces.append(lib)
+
+def add_gre_piece():
+    global starting_pieces
+    starting_pieces.append(gre)
+
+def add_pur_piece():
+    global starting_pieces
+    starting_pieces.append(pur)
+
+def add_dab_piece():
+    global starting_pieces
+    starting_pieces.append(dab)
+
+def add_bei_piece():
+    global starting_pieces
+    starting_pieces.append(bei)
+
+def add_pin_piece():
+    global starting_pieces
+    starting_pieces.append(pin)
+
+def add_whi_piece():
+    global starting_pieces
+    starting_pieces.append(whi)
+
+def add_yel_piece():
+    global starting_pieces
+    starting_pieces.append(whi)
+
+def add_lig_piece():
+    global starting_pieces
+    starting_pieces.append(lig)
 
 def put_piece():
     global gui_piece_selected
@@ -109,6 +197,7 @@ def build_gui():
     gui_piece_selected = False
     grid = generate_field()
     generate_option_buttons()
+    generate_pieces_left()
     master.mainloop()
 
 
@@ -219,6 +308,6 @@ def calculate_empty():
 # main
 # pieces: standard piece -> 1, wizard -> 20, hat -> 10, empty -> 0, double_stack -> 2
 
-#build_gui()
+build_gui()
 #calculate_empty()
-calculate_one_left()
+#calculate_one_left()
