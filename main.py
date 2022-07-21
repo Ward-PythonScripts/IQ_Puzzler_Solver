@@ -9,52 +9,53 @@ import tkinter
 
 import numpy
 import numpy as np
+from copy import deepcopy
 
 # definitions
-dag = np.array([[1, 1, 0, 0],  # dark green
-                [0, 1, 1, 1, ]])
-ora = np.array([[1, 0, 0],
-                [1, 1, 1]])  # orange
-red = np.array([[1, 1, 0],
-                [1, 1, 1]])  # red
-lib = np.array([[1, 1, 1],
-                [0, 0, 1],
-                [0, 0, 1]])  # light blue
-gre = np.array([[0, 1, 0],
-                [1, 1, 1],
-                [0, 1, 0]])  # grey
-pur = np.array([[1, 1, 1, 1]])  # purple
-dab = np.array([[0, 1],
-                [0, 1],
-                [0, 1],
-                [1, 1]])  # dark blue
-bei = np.array([[1, 1, 1, 0],
-                [0, 0, 1, 0]])  # beige
-pin = np.array([[1, 1, 0],
-                [0, 1, 1, ],
-                [0, 0, 1]])  # pink
-whi = np.array([[1, 0],
-                [1, 1]])  # white
-yel = np.array([[1, 1],
-                [0, 1],
-                [1, 1]])  # yellow
-lig = np.array([[1, 1],
-                [1, 1]])  # light green
+dag = np.array([["dag", "dag", 0, 0],  # dark green
+                [0, "dag", "dag", "dag", ]])
+ora = np.array([["ora", 0, 0],
+                ["ora", "ora", "ora"]])  # orange
+red = np.array([["red", "red", 0],
+                ["red", "red", "red"]])  # red
+lib = np.array([["lib", "lib", "lib"],
+                [0, 0, "lib"],
+                [0, 0, "lib"]])  # light blue
+gre = np.array([[0, "gre", 0],
+                ["gre", "gre", "gre"],
+                [0, "gre", 0]])  # grey
+pur = np.array([["pur", "pur", "pur", "pur"]])  # purple
+dab = np.array([[0, "dab"],
+                [0, "dab"],
+                [0, "dab"],
+                ["dab", "dab"]])  # dark blue
+bei = np.array([["bei", "bei", "bei", 0],
+                [0, 0, "bei", 0]])  # beige
+pin = np.array([["pin", "pin", 0],
+                [0, "pin", "pin"],
+                [0, 0, "pin"]])  # pink
+whi = np.array([["whi", 0],
+                ["whi", "whi"]])  # white
+yel = np.array([["yel", "yel"],
+                [0, "yel"],
+                ["yel", "yel"]])  # yellow
+lig = np.array([["lig", "lig"],
+                ["lig", "lig"]])  # light green
 
 gui_piece_selected = True
 master = tkinter.Tk()
 option_buttons_column = 20  # constant
 grid = [[]]
-grid_buttons:list[tkinter.StringVar] = []
+grid_buttons: list[tkinter.StringVar] = []
 starting_pieces = []
 
 
 class MyPieceButton:
-    def __init__(self, piece, row_int,name:str):
+    def __init__(self, piece, row_int, name: str):
         self.toggled = False
         self.piece = piece
-        button = tkinter.Button(master, text=name,command=lambda:self.clicked())
-        button.grid(row=row_int,column=option_buttons_column + 2)
+        button = tkinter.Button(master, text=name, command=lambda: self.clicked())
+        button.grid(row=row_int, column=option_buttons_column + 2)
         self.button = button
 
     def clicked(self):
@@ -71,11 +72,12 @@ class MyPieceButton:
 
     def remove_piece(self):
         global starting_pieces
-        starting_pieces = my_list_remove(starting_pieces,self.piece)
+        starting_pieces = my_list_remove(starting_pieces, self.piece)
         self.button.config(bg="white")
 
-def my_list_remove(pieces:numpy.ndarray,piece:numpy.ndarray):
-    pos = get_pos_of_element(pieces,piece)
+
+def my_list_remove(pieces: numpy.ndarray, piece: numpy.ndarray):
+    pos = get_pos_of_element(pieces, piece)
     if pos == -1:
         print("Tried to find the piece in the list of pieces but failed spectacularly")
         exit(77)
@@ -83,15 +85,18 @@ def my_list_remove(pieces:numpy.ndarray,piece:numpy.ndarray):
         del pieces[pos]
         return pieces
 
-def get_pos_of_element(pieces:numpy.ndarray,piece:numpy.ndarray):
+
+def get_pos_of_element(pieces: numpy.ndarray, piece: numpy.ndarray):
     index = 0
     for piece_lst in pieces:
-        #get all the pieces and than compare them with the element
-        if compare_pieces(piece_lst,piece):
+        # get all the pieces and than compare them with the element
+        if compare_pieces(piece_lst, piece):
             return index
         index += 1
     return -1
-def compare_pieces(piece1:numpy.ndarray,piece2:numpy.ndarray):
+
+
+def compare_pieces(piece1: numpy.ndarray, piece2: numpy.ndarray):
     if np.size(piece1) == np.size(piece2):
         for y in range(len(piece1)):
             for x in range(len(piece1[y])):
@@ -102,6 +107,7 @@ def compare_pieces(piece1:numpy.ndarray,piece2:numpy.ndarray):
         return True
     else:
         return False
+
 
 def get_piece_string():
     global gui_piece_selected
@@ -149,10 +155,10 @@ def generate_option_buttons():
     piece_button.grid(row=0, column=option_buttons_column)
     no_piece_button = tkinter.Button(master, text="empty")
     no_piece_button.grid(row=1, column=option_buttons_column)
-    piece_button['command'] = lambda: put_piece(piece_button,no_piece_button)
-    no_piece_button['command']= lambda :dont_put_piece(piece_button,no_piece_button)
-    select_all_button = tkinter.Button(master,text="select all",command=lambda:select_all_pieces())
-    select_all_button.grid(row=2,column=option_buttons_column)
+    piece_button['command'] = lambda: put_piece(piece_button, no_piece_button)
+    no_piece_button['command'] = lambda: dont_put_piece(piece_button, no_piece_button)
+    select_all_button = tkinter.Button(master, text="select all", command=lambda: select_all_pieces())
+    select_all_button.grid(row=2, column=option_buttons_column)
     calculate_button = tkinter.Button(master, text="calculate", command=lambda: calculate())
     calculate_button.grid(row=2, column=option_buttons_column + 3)
 
@@ -162,29 +168,29 @@ def generate_pieces_left():
     pieces_label = tkinter.Label(master, text="Select the pieces that are left")
     pieces_label.grid(row=row_int, column=option_buttons_column + 2)
     row_int += 1
-    dag_button = MyPieceButton(dag, row_int,"Dark Green")
+    dag_button = MyPieceButton(dag, row_int, "Dark Green")
     row_int += 1
-    ora_button = MyPieceButton(ora,row_int,"Orange")
+    ora_button = MyPieceButton(ora, row_int, "Orange")
     row_int += 1
-    red_button = MyPieceButton(red,row_int,"Red")
+    red_button = MyPieceButton(red, row_int, "Red")
     row_int += 1
-    lib_button = MyPieceButton(lib,row_int,"Light Blue")
+    lib_button = MyPieceButton(lib, row_int, "Light Blue")
     row_int += 1
-    gre_button = MyPieceButton(gre,row_int,"Grey")
+    gre_button = MyPieceButton(gre, row_int, "Grey")
     row_int += 1
-    pur_button = MyPieceButton(pur,row_int,"Purple")
+    pur_button = MyPieceButton(pur, row_int, "Purple")
     row_int += 1
-    dab_button = MyPieceButton(dab,row_int,"Dark Blue")
+    dab_button = MyPieceButton(dab, row_int, "Dark Blue")
     row_int += 1
-    bei_button = MyPieceButton(bei,row_int,"Beige")
+    bei_button = MyPieceButton(bei, row_int, "Beige")
     row_int += 1
-    pin_button = MyPieceButton(pin,row_int,"Pink")
+    pin_button = MyPieceButton(pin, row_int, "Pink")
     row_int += 1
-    whi_button = MyPieceButton(whi,row_int,"White")
+    whi_button = MyPieceButton(whi, row_int, "White")
     row_int += 1
-    yel_button = MyPieceButton(yel,row_int,"Yellow")
+    yel_button = MyPieceButton(yel, row_int, "Yellow")
     row_int += 1
-    lig_button = MyPieceButton(lig,row_int,"Light Blue")
+    lig_button = MyPieceButton(lig, row_int, "Light Blue")
 
 
 def add_piece(pieces, are_adding):
@@ -195,17 +201,19 @@ def add_piece(pieces, are_adding):
         starting_pieces.remove(pieces)
 
 
-def put_piece(piece_button,no_piece_button):
+def put_piece(piece_button, no_piece_button):
     global gui_piece_selected
     gui_piece_selected = True
     piece_button.config(bg="light green")
     no_piece_button.config(bg="white")
 
-def dont_put_piece(piece_button,no_piece_button):
+
+def dont_put_piece(piece_button, no_piece_button):
     global gui_piece_selected
     gui_piece_selected = False
     piece_button.config(bg="white")
     no_piece_button.config(bg="light green")
+
 
 def select_all_pieces():
     global grid
@@ -221,7 +229,6 @@ def select_all_pieces():
         button_txt.set(string_to_put)
 
 
-
 def build_gui():
     global grid, gui_piece_selected
     gui_piece_selected = False
@@ -230,15 +237,20 @@ def build_gui():
     generate_pieces_left()
     master.mainloop()
 
+########################################################################################################################
+########################################################################################################################
+################################################ calculation part#######################################################
+########################################################################################################################
+########################################################################################################################
 
-###### calculation part##########
 class Node:
-    def __init__(self, state, pieces: list):
+    def __init__(self, state:list, pieces: list):
         self.state = state
         self.pieces = pieces
         if check_if_solution_found(node=self):
             print("The solution has been found")
-            exit(99)
+            render(self.state)
+            exit(0)
         find_valid_moves(node=self)
 
 
@@ -268,9 +280,11 @@ def find_valid_moves(node):
                 for y in range(len(node.state)):
                     for x in range(len(node.state[y])):
                         if piece_can_be_placed(piece, node.state, x, y):
-                            new_state = execute_step(piece, node.state, x, y)
+                            new_state = deepcopy(node.state)
+                            new_state = execute_step(piece, new_state, x, y)
                             new_pieces = node.pieces.copy()
                             new_pieces.pop(piece_pos)  # removes and returns the element at the given index
+                            #print("we would create a new node")
                             Node(new_state, new_pieces)
 
 
@@ -278,7 +292,7 @@ def piece_can_be_placed(piece, state, x, y):
     try:
         for piece_y in range(len(piece)):
             for piece_x in range(len(piece[piece_y])):
-                if piece[piece_y][piece_x] != 0:
+                if piece[piece_y][piece_x] != "0":
                     # we are trying to place a piece here -> check if this place is available on the board
                     if state[y + piece_y][x + piece_x] != 0:
                         # the place isn't available (the y and x is the offset where we are trying to place the piece
@@ -295,7 +309,7 @@ def execute_step(piece, state, x, y):
         for piece_x in range(len(piece[piece_y])):
             # change the values in the state to the corresponding value from the piece, if the value was 1
             # if was zero no piece was trying to be placed
-            if piece[piece_y][piece_x] != 0:
+            if piece[piece_y][piece_x] != "0":
                 state[piece_y + y][piece_x + x] = piece[piece_y][piece_x]
     return state
 
@@ -305,7 +319,10 @@ def render(board):
     row_str = ""
     for y in range(len(board)):
         for x in range(len(board[y])):
-            row_str += str(board[y][x]) + "  "
+            if board[y][x] == "1" or board[y][x] == 1:
+                row_str += "  unk  "
+            else:
+                row_str += "  " + str(board[y][x]) + "  "
         print(row_str)
         row_str = ""
     print("#" * 30)
@@ -338,9 +355,17 @@ def calculate_empty():
     Node(grid_loc, pieces_loc)
 
 
+def calculate_specific():
+    grid_loc = [[1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0], [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0], [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+                [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0]]
+    pieces_loc = [pin,red,ora,gre,yel]
+    Node(grid_loc,pieces_loc)
+
+
 # main
 # pieces: standard piece -> 1, wizard -> 20, hat -> 10, empty -> 0, double_stack -> 2
 
 build_gui()
-# calculate_empty()
-# calculate_one_left()
+#calculate_empty()
+#calculate_one_left()
+#calculate_specific()
