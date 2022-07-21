@@ -10,6 +10,7 @@ import tkinter
 import numpy
 import numpy as np
 from copy import deepcopy
+import datetime
 
 # definitions
 dag = np.array([["dag", "dag", 0, 0],  # dark green
@@ -48,6 +49,8 @@ option_buttons_column = 20  # constant
 grid = [[]]
 grid_buttons: list[tkinter.StringVar] = []
 starting_pieces = []
+boards = []
+starting_time = datetime.datetime.now()
 
 
 class MyPieceButton:
@@ -250,8 +253,53 @@ class Node:
         if check_if_solution_found(node=self):
             print("The solution has been found")
             render(self.state)
+            end_time = datetime.datetime.now()
+            time_diff = end_time-starting_time
+            print("it took us ", time_diff.seconds, " seconds to calculate")
             exit(0)
-        find_valid_moves(node=self)
+        #we could check if the node has been used before, but it takes a lot longer to calculate if it has been used
+        #if not self.check_if_node_has_not_happened_yet():
+        if not self.check_if_hole():
+            find_valid_moves(node=self)
+
+    def check_if_hole(self):
+        #if there is a hole of length 1,2; than there will never be a solution found
+        for y in range(len(self.state)):
+            for x in range(len(self.state[y])):
+                if self.state[y][x] == 0 or self.state[y][x] == "0":
+                    #check in all directions, if there is a one -> not good. If there is a zero
+                    if not ((self.check_if_pos_is_occupied(x+1,y)) or (self.check_if_pos_is_occupied(x-1,y)) or
+                            (self.check_if_pos_is_occupied(x,y+1)) or (self.check_if_pos_is_occupied(x,y-1))):
+                        return True
+        return False
+
+
+    def check_if_pos_is_occupied(self,x,y):
+        try:
+            if self.state[y][x] == "0" or self.state[y][x] == 0:
+                return True
+            else:
+                return False
+        except IndexError as ind:
+            return True
+
+    def check_if_node_has_not_happened_yet(self):
+        global boards
+        for board in boards:
+            if self.compare_boards(board):
+                return False
+        #board wasn't found yet, so add to the list
+        boards.append(deepcopy(self.state))
+
+    def compare_boards(self,board_to_compare):
+        for y in range(len(board_to_compare)):
+            for x in range(len(board_to_compare[y])):
+                if board_to_compare[y][x] != self.state [y][x]:
+                    return False
+        return True
+
+
+
 
 
 def check_if_solution_found(node):
@@ -365,7 +413,7 @@ def calculate_specific():
 # main
 # pieces: standard piece -> 1, wizard -> 20, hat -> 10, empty -> 0, double_stack -> 2
 
-build_gui()
+#build_gui()
 #calculate_empty()
 #calculate_one_left()
-#calculate_specific()
+calculate_specific()
