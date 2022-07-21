@@ -46,6 +46,31 @@ grid = [[]]
 starting_pieces = []
 
 
+class MyPieceButton:
+    def __init__(self, piece, row_int,name:str):
+        self.toggled = False
+        self.piece = piece
+        button = tkinter.Button(master, text=name,command=lambda:self.clicked())
+        button.grid(row=row_int,column=option_buttons_column + 2)
+        self.button = button
+
+    def clicked(self):
+        if self.toggled:
+            self.remove_piece()
+        else:
+            self.add_piece()
+
+    def add_piece(self):
+        global starting_pieces
+        starting_pieces.append(self.piece)
+        self.button.config(bg="light green")
+
+    def remove_piece(self):
+        global starting_pieces
+        starting_pieces.remove(self.piece)
+        self.button.config(bg="white")
+        
+
 def get_piece_string():
     global gui_piece_selected
     if gui_piece_selected:
@@ -93,94 +118,44 @@ def generate_option_buttons():
     calculate_button = tkinter.Button(master, text="calculate", command=lambda: calculate())
     calculate_button.grid(row=2, column=option_buttons_column + 1)
 
+
 def generate_pieces_left():
     row_int = 0
-    pieces_label = tkinter.Label(master,text="Select the pieces that are left")
-    pieces_label.grid(row = row_int,column=option_buttons_column+2)
+    pieces_label = tkinter.Label(master, text="Select the pieces that are left")
+    pieces_label.grid(row=row_int, column=option_buttons_column + 2)
     row_int += 1
-    dag_button = tkinter.Button(master,text="Dark Green",command=lambda: add_dag_piece())
-    dag_button.grid(row=row_int,column=option_buttons_column+2)
+    dag_button = MyPieceButton(dag, row_int,"Dark Green")
     row_int += 1
-    ora_button = tkinter.Button(master, text="Orange",command=lambda: add_lig_piece())
-    ora_button.grid(row=row_int, column=option_buttons_column + 2)
+    ora_button = MyPieceButton(ora,row_int,"Orange")
     row_int += 1
-    red_button = tkinter.Button(master, text="Red",command=lambda: add_red_piece())
-    red_button.grid(row=row_int, column=option_buttons_column + 2)
+    red_button = MyPieceButton(red,row_int,"Red")
     row_int += 1
-    lib_button = tkinter.Button(master, text="Light Blue",command=lambda: add_lib_piece())
-    lib_button.grid(row=row_int, column=option_buttons_column + 2)
+    lib_button = MyPieceButton(lib,row_int,"Light Blue")
     row_int += 1
-    gre_button = tkinter.Button(master, text="Grey",command=lambda: add_gre_piece())
-    gre_button.grid(row=row_int, column=option_buttons_column + 2)
+    gre_button = MyPieceButton(gre,row_int,"Grey")
     row_int += 1
-    pur_button = tkinter.Button(master, text="Purple",command=lambda: add_pur_piece())
-    pur_button.grid(row=row_int, column=option_buttons_column + 2)
+    pur_button = MyPieceButton(pur,row_int,"Purple")
     row_int += 1
-    dab_button = tkinter.Button(master, text="Dark Blue",command=lambda: add_dab_piece())
-    dab_button.grid(row=row_int, column=option_buttons_column + 2)
+    dab_button = MyPieceButton(dab,row_int,"Dark Blue")
     row_int += 1
-    bei_button = tkinter.Button(master, text="Beige",command=lambda: add_bei_piece())
-    bei_button.grid(row=row_int, column=option_buttons_column + 2)
+    bei_button = MyPieceButton(bei,row_int,"Beige")
     row_int += 1
-    pin_button = tkinter.Button(master, text="Pink",command=lambda: add_pin_piece())
-    pin_button.grid(row=row_int, column=option_buttons_column + 2)
+    pin_button = MyPieceButton(pin,row_int,"Pink")
     row_int += 1
-    whi_button = tkinter.Button(master, text="White",command=lambda: add_whi_piece())
-    whi_button.grid(row=row_int, column=option_buttons_column + 2)
+    whi_button = MyPieceButton(whi,row_int,"White")
     row_int += 1
-    yel_button = tkinter.Button(master, text="Yellow",command=lambda: add_yel_piece())
-    yel_button.grid(row=row_int, column=option_buttons_column + 2)
+    yel_button = MyPieceButton(yel,row_int,"Yellow")
     row_int += 1
-    lig_button = tkinter.Button(master,text="Light Green",command=lambda: add_lig_piece())
-    lig_button.grid(row=row_int,column=option_buttons_column+2)
+    lig_button = MyPieceButton(lig,row_int,"Light Blue")
 
-def add_dag_piece():
-    global starting_pieces
-    starting_pieces.append(dag)
 
-def add_ora_piece():
+def add_piece(pieces, are_adding):
     global starting_pieces
-    starting_pieces.append(ora)
+    if are_adding:
+        starting_pieces.append(pieces)
+    else:
+        starting_pieces.remove(pieces)
 
-def add_red_piece():
-    global starting_pieces
-    starting_pieces.append(red)
-
-def add_lib_piece():
-    global starting_pieces
-    starting_pieces.append(lib)
-
-def add_gre_piece():
-    global starting_pieces
-    starting_pieces.append(gre)
-
-def add_pur_piece():
-    global starting_pieces
-    starting_pieces.append(pur)
-
-def add_dab_piece():
-    global starting_pieces
-    starting_pieces.append(dab)
-
-def add_bei_piece():
-    global starting_pieces
-    starting_pieces.append(bei)
-
-def add_pin_piece():
-    global starting_pieces
-    starting_pieces.append(pin)
-
-def add_whi_piece():
-    global starting_pieces
-    starting_pieces.append(whi)
-
-def add_yel_piece():
-    global starting_pieces
-    starting_pieces.append(whi)
-
-def add_lig_piece():
-    global starting_pieces
-    starting_pieces.append(lig)
 
 def put_piece():
     global gui_piece_selected
@@ -226,11 +201,11 @@ def find_valid_moves(node):
     # loop through all the available pieces and try to place them in any valid position
     # if they can be placed in the new position create a new node and remove the piece from the available piece list
 
-    for piece_pos in range(0,len(node.pieces)):
+    for piece_pos in range(0, len(node.pieces)):
         piece = node.pieces[piece_pos]
-        #piece can be placed with two faces up, the 1 in the flip signifies the axis over which we flip
+        # piece can be placed with two faces up, the 1 in the flip signifies the axis over which we flip
         for flip in range(2):
-            piece = np.flip(piece,1)
+            piece = np.flip(piece, 1)
             for rot in range(0, 5):
                 # try to place the piece in every possible rotation,
                 # we will rotate it 4 times in the last iteration, not that efficient but ez to write
@@ -256,9 +231,8 @@ def piece_can_be_placed(piece, state, x, y):
         # no unavailable places found -> the piece can be placed
         return True
     except IndexError as ind:
-        #we tried to place a piece of the board pretty much -> place won't fit anyways
+        # we tried to place a piece of the board pretty much -> place won't fit anyways
         return False
-
 
 
 def execute_step(piece, state, x, y):
@@ -289,10 +263,13 @@ def calculate():
     # start the first node, this will trigger the iterative process
     Node(grid, starting_pieces)
 
+
 def calculate_one_left():
-    grid_loc = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+    grid_loc = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
     pieces_loc = [dag]
-    Node(grid_loc,pieces_loc)
+    Node(grid_loc, pieces_loc)
+
 
 def calculate_empty():
     grid_loc = []
@@ -309,5 +286,5 @@ def calculate_empty():
 # pieces: standard piece -> 1, wizard -> 20, hat -> 10, empty -> 0, double_stack -> 2
 
 build_gui()
-#calculate_empty()
-#calculate_one_left()
+# calculate_empty()
+# calculate_one_left()
